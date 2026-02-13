@@ -149,7 +149,7 @@ export default function AddTransactionScreen() {
             />
           </View>
           <View style={[styles.inputGroup, { flex: 1 }]}>
-            <Text style={styles.inputLabel}>USDT Amount</Text>
+            <Text style={styles.inputLabel}>USD Amount</Text>
             <TextInput
               style={styles.input}
               placeholder="0.00"
