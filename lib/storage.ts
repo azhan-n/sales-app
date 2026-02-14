@@ -50,7 +50,32 @@ async function saveLocalTransactions(txns: Transaction[]): Promise<void> {
   await AsyncStorage.setItem(LOCAL_TRANSACTIONS_KEY, JSON.stringify(txns));
 }
 
+export async function postToSheet(txn: Transaction): Promise<boolean> {
+  try {
+    const params = new URLSearchParams({
+      action: "add",
+      cardType: txn.cardType,
+      cardNumber: txn.cardLast4,
+      owner: txn.customerName,
+      buyRate: String(txn.buyRate),
+      buyAmount: String(txn.buyAmountUSDT),
+      sellRate: String(txn.sellRate),
+      sellAmount: String(txn.sellAmountUSDT),
+      cost: String(txn.cost),
+      grossProfit: String(txn.revenue),
+      netProfit: String(txn.profit),
+    });
+    const res = await fetch(`${GOOGLE_SHEET_URL}?${params.toString()}`);
+    const text = await res.text();
+    return res.ok;
+  } catch (e) {
+    console.warn("Failed to post to sheet:", e);
+    return false;
+  }
+}
+
 export async function addTransaction(txn: Transaction): Promise<void> {
+  await postToSheet(txn);
   const txns = await getLocalTransactions();
   txns.unshift(txn);
   await saveLocalTransactions(txns);
