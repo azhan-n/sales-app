@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
-import { Transaction, getTransactions, addTransaction as addTxn, deleteTransaction as delTxn, seedInitialData } from "./storage";
+import {
+  Transaction,
+  fetchSheetTransactions,
+  getLocalTransactions,
+  addTransaction as addTxn,
+  deleteTransaction as delTxn,
+} from "./storage";
 
 interface TransactionContextValue {
   transactions: Transaction[];
@@ -11,6 +17,7 @@ interface TransactionContextValue {
   totalRevenue: number;
   totalCost: number;
   customerStats: { name: string; profit: number; count: number }[];
+  sheetError: string | null;
 }
 
 const TransactionContext = createContext<TransactionContextValue | null>(null);
@@ -18,12 +25,23 @@ const TransactionContext = createContext<TransactionContextValue | null>(null);
 export function TransactionProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sheetError, setSheetError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
-    await seedInitialData();
-    const data = await getTransactions();
-    setTransactions(data);
+    setSheetError(null);
+
+    let sheetTxns: Transaction[] = [];
+    try {
+      sheetTxns = await fetchSheetTransactions();
+    } catch (e: any) {
+      setSheetError(e.message || "Failed to load from Google Sheets");
+    }
+
+    const localTxns = await getLocalTransactions();
+
+    const combined = [...localTxns, ...sheetTxns];
+    setTransactions(combined);
     setIsLoading(false);
   }, []);
 
@@ -57,8 +75,8 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   }, [transactions]);
 
   const value = useMemo(
-    () => ({ transactions, isLoading, addTransaction, deleteTransaction, refresh, totalProfit, totalRevenue, totalCost, customerStats }),
-    [transactions, isLoading, addTransaction, deleteTransaction, refresh, totalProfit, totalRevenue, totalCost, customerStats]
+    () => ({ transactions, isLoading, addTransaction, deleteTransaction, refresh, totalProfit, totalRevenue, totalCost, customerStats, sheetError }),
+    [transactions, isLoading, addTransaction, deleteTransaction, refresh, totalProfit, totalRevenue, totalCost, customerStats, sheetError]
   );
 
   return <TransactionContext.Provider value={value}>{children}</TransactionContext.Provider>;
