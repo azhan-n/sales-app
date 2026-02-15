@@ -61,9 +61,6 @@ export async function postToSheet(txn: Transaction): Promise<boolean> {
       buyAmount: String(txn.buyAmountUSDT),
       sellRate: String(txn.sellRate),
       sellAmount: String(txn.sellAmountUSDT),
-      cost: String(txn.cost),
-      grossProfit: String(txn.revenue),
-      netProfit: String(txn.profit),
     });
     const res = await fetch(`${GOOGLE_SHEET_URL}?${params.toString()}`);
     const text = await res.text();
