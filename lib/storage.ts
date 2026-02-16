@@ -24,18 +24,18 @@ export async function fetchSheetTransactions(): Promise<Transaction[]> {
   const res = await fetch(GOOGLE_SHEET_URL);
   const data = await res.json();
 
-  return data.map((row: any) => ({
-    id: String(row.id),
-    customerName: row.owner || "",
-    cardLast4: row.cardNumber || "----",
-    cardType: (row.cardType || "").trim(),
-    buyRate: row.buyRate || 0,
-    buyAmountUSDT: row.buyAmount || 0,
-    sellRate: row.sellRate || 0,
-    sellAmountUSDT: row.sellAmount || 0,
-    cost: row.cost || 0,
-    revenue: row.grossProfit || 0,
-    profit: row.netProfit || 0,
+  return data.map((row: any, index: number) => ({
+    id: String(row.id ?? index + 1),
+    customerName: (row.owner || "") + "",
+    cardLast4: (row.cardNumber || "----") + "",
+    cardType: ((row.cardType || "") + "").trim(),
+    buyRate: Number(row.buyRate) || 0,
+    buyAmountUSDT: Number(row.buyAmount) || 0,
+    sellRate: Number(row.sellRate) || 0,
+    sellAmountUSDT: Number(row.sellAmount) || 0,
+    cost: Number(row.cost) || 0,
+    revenue: Number(row.grossProfit) || 0,
+    profit: Number(row.netProfit) || 0,
     createdAt: new Date().toISOString(),
   }));
 }
