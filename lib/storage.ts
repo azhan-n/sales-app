@@ -16,7 +16,7 @@ export interface Transaction {
 }
 
 const GOOGLE_SHEET_URL =
-  "https://script.google.com/macros/s/AKfycbw7Fl38xuouTFbhqcg1Of8NV9Uyhi0ghu6FJYNWChgkVEDgpiug8YYPw-9vPW6SQq8IEQ/exec";
+"https://script.google.com/macros/s/AKfycbxVwc0buJoICP6sIzK6GxmZNtdvdYA4lw7MhmMxxYjI2weRxDReGIK4sbKyKESUPhEUHQ/exec";
 
 const LOCAL_TRANSACTIONS_KEY = "usdt_local_transactions";
 
