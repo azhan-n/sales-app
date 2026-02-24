@@ -2,11 +2,12 @@ import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
 import { BlurView } from "expo-blur";
-import { Platform, StyleSheet, useColorScheme, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
 import Colors from "@/constants/colors";
+import { useTheme } from "@/lib/ThemeContext";
 
 function NativeTabLayout() {
   return (
@@ -28,8 +29,7 @@ function NativeTabLayout() {
 }
 
 function ClassicTabLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { isDark, theme } = useTheme();
   const isWeb = Platform.OS === "web";
   const isIOS = Platform.OS === "ios";
   const safeAreaInsets = useSafeAreaInsets();
@@ -39,12 +39,12 @@ function ClassicTabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: Colors.palette.emerald,
-        tabBarInactiveTintColor: Colors.palette.slateLight,
+        tabBarInactiveTintColor: theme.textSecondary,
         tabBarStyle: {
           position: "absolute" as const,
-          backgroundColor: isIOS ? "transparent" : isDark ? Colors.palette.navy : Colors.palette.white,
+          backgroundColor: isIOS ? "transparent" : theme.tabBarBg,
           borderTopWidth: isWeb ? 1 : 0,
-          borderTopColor: isDark ? Colors.palette.border : "#E2E8F0",
+          borderTopColor: theme.border,
           elevation: 0,
           ...(isWeb ? { height: 84 } : {}),
           paddingBottom: isWeb ? 0 : safeAreaInsets.bottom,
@@ -53,7 +53,7 @@ function ClassicTabLayout() {
           isIOS ? (
             <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={StyleSheet.absoluteFill} />
           ) : isWeb ? (
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? Colors.palette.navy : Colors.palette.white }]} />
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: theme.tabBarBg }]} />
           ) : null,
         tabBarLabelStyle: {
           fontFamily: "DMSans_500Medium",
