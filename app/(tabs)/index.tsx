@@ -38,28 +38,6 @@ function StatCard({ title, value, icon, color, subtitle, theme }: { title: strin
   );
 }
 
-function RecentTransaction({ txn, theme }: { txn: any; theme: any }) {
-  const isPositive = txn.profit > 0;
-  return (
-    <View style={[styles.recentItem, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
-      <View style={styles.recentLeft}>
-        <View style={[styles.avatar, { backgroundColor: palette.emerald + "20" }]}>
-          <Text style={styles.avatarText}>{txn.customerName.charAt(0)}</Text>
-        </View>
-        <View>
-          <Text style={[styles.recentName, { color: theme.text }]}>{txn.customerName}</Text>
-          <Text style={[styles.recentCard, { color: theme.textMuted }]}>{txn.cardType} {txn.cardLast4 !== "----" ? `****${txn.cardLast4}` : ""}</Text>
-        </View>
-      </View>
-      <View style={styles.recentRight}>
-        <Text style={[styles.recentProfit, { color: isPositive ? palette.emerald : palette.red }]}>
-          {isPositive ? "+" : ""}{formatCurrency(txn.profit)}
-        </Text>
-        <Text style={[styles.recentUsdt, { color: theme.textMuted }]}>{formatCurrency(txn.sellAmountUSDT)} USDT</Text>
-      </View>
-    </View>
-  );
-}
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
@@ -137,12 +115,7 @@ export default function DashboardScreen() {
           </View>
         ))}
 
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Recent Sales</Text>
-        </View>
-        {transactions.slice(0, 5).map((txn) => (
-          <RecentTransaction key={txn.id} txn={txn} theme={theme} />
-        ))}
+
       </ScrollView>
     </View>
   );
@@ -194,24 +167,4 @@ const styles = StyleSheet.create({
   customerName: { fontSize: 15, fontFamily: "DMSans_600SemiBold" },
   customerCount: { fontSize: 12, fontFamily: "DMSans_400Regular" },
   customerProfit: { fontSize: 15, fontFamily: "DMSans_700Bold", color: palette.emerald },
-  recentItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 8,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  recentLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
-  avatar: { width: 40, height: 40, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  avatarText: { fontSize: 16, fontFamily: "DMSans_700Bold", color: palette.emerald },
-  recentName: { fontSize: 15, fontFamily: "DMSans_600SemiBold" },
-  recentCard: { fontSize: 12, fontFamily: "DMSans_400Regular", marginTop: 1 },
-  recentRight: { alignItems: "flex-end" },
-  recentProfit: { fontSize: 15, fontFamily: "DMSans_700Bold" },
-  recentUsdt: { fontSize: 12, fontFamily: "DMSans_400Regular", marginTop: 1 },
 });
